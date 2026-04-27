@@ -1,78 +1,464 @@
+import { useState } from "react";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const displayFont = Cormorant_Garamond({
   subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-display",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bodyFont = Manrope({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-body",
 });
+
+const copy = {
+  en: {
+    nav: {
+      story: "Our Story",
+      attire: "Attire",
+      gallery: "Gallery",
+      travel: "Travel",
+      party: "Wedding Party",
+      rsvp: "RSVP",
+    },
+    hero: {
+      eyebrow: "Save the date",
+      subtitle: "Saturday, Sept 5, 2026 • Phelan, CA • Family Ranch",
+      tags: ["Charro Wedding", "Charro Gala", "Mariachi Suits", "Boots Welcome"],
+      ctaPrimary: "Our story",
+      ctaSecondary: "Travel details",
+    },
+    info: {
+      eyebrow: "Celebration",
+      title: "Wedding",
+      body:
+        "Join us for a warm, open-air celebration at our family ranch in Phelan, California. Ceremony and reception details will follow soon.",
+      note: "Expect sunset views, mariachi energy, and a night made for dancing.",
+    },
+    story: {
+      eyebrow: "Our story",
+      title: "How it all started",
+      lead:
+        "We met in the summer of 2022 at a nightclub. From that night on, every weekend turned into a new adventure: concerts, DTLA dinners, and Dodgers games. Shortly after, we moved in together in January 2023 to our first home in downtown Los Angeles.",
+      cards: [
+        {
+          year: "2022",
+          title: "First night out",
+          text: "One dance, a spark, and a summer we will never forget.",
+        },
+        {
+          year: "2022",
+          title: "Weekends on repeat",
+          text: "Concerts, DTLA nights, and baseball games every chance we got.",
+        },
+        {
+          year: "2023",
+          title: "Home in DTLA",
+          text: "We moved in together and started building our life.",
+        },
+      ],
+    },
+    attire: {
+      eyebrow: "Dress code",
+      title: "Charro celebration",
+      lead:
+        "This is a Charro Wedding. Charro Gala attire, mariachi suits, and boots are encouraged and celebrated.",
+      cardTitle: "Attire highlights",
+      items: [
+        "Charro suits and gowns with classic embroidery",
+        "Mariachi-inspired suits or elegant black tie",
+        "Boots and western accents welcome",
+      ],
+      note: "Bring your boldest look and come ready to celebrate.",
+    },
+    gallery: {
+      eyebrow: "Gallery",
+      title: "Moments together",
+      lead: "Moments we have shared.",
+    },
+    travel: {
+      eyebrow: "Travel",
+      title: "Nearby stays",
+      lead: "Nearby options for lodging.",
+    },
+    party: {
+      eyebrow: "Wedding party",
+      title: "Our people",
+      lead: "Our closest family and friends.",
+      groomsmen: "Groomsmen",
+      bridesmaids: "Bridesmaids",
+    },
+    rsvp: {
+      eyebrow: "RSVP",
+      title: "Please RSVP",
+      lead:
+        "Formal invitations and RSVP details are on the way. This will be assigned seating, so please confirm your attendance once the RSVP is shared.",
+    },
+    footer: "With love, Cesar & Candy",
+  },
+  es: {
+    nav: {
+      story: "Historia",
+      attire: "Vestimenta",
+      gallery: "Galeria",
+      travel: "Hospedaje",
+      party: "Cortejo",
+      rsvp: "Confirmacion",
+    },
+    hero: {
+      eyebrow: "Guarden la fecha",
+      subtitle: "Sabado, 5 de septiembre de 2026 • Phelan, CA • Rancho familiar",
+      tags: ["Boda Charra", "Gala Charra", "Trajes de Mariachi", "Botas Bienvenidas"],
+      ctaPrimary: "Nuestra historia",
+      ctaSecondary: "Detalles de viaje",
+    },
+    info: {
+      eyebrow: "Celebracion",
+      title: "Boda",
+      body:
+        "Acompanenos en una celebracion al aire libre en nuestro rancho familiar en Phelan, California. Los detalles de ceremonia y recepcion se compartiran pronto.",
+      note: "Esperen atardeceres, energia de mariachi y una noche para bailar.",
+    },
+    story: {
+      eyebrow: "Nuestra historia",
+      title: "Como empezo todo",
+      lead:
+        "Nos conocimos en el verano de 2022 en un club nocturno. Desde esa noche, cada fin de semana se volvio una nueva aventura: conciertos, cenas en DTLA y juegos de los Dodgers. Poco despues nos mudamos juntos en enero de 2023 a nuestro primer hogar en el centro de Los Angeles.",
+      cards: [
+        {
+          year: "2022",
+          title: "Primera salida",
+          text: "Un baile, una chispa y un verano que nunca olvidaremos.",
+        },
+        {
+          year: "2022",
+          title: "Fines de semana",
+          text: "Conciertos, noches en DTLA y juegos de beisbol cada oportunidad.",
+        },
+        {
+          year: "2023",
+          title: "Hogar en DTLA",
+          text: "Nos mudamos juntos y empezamos a construir nuestra vida.",
+        },
+      ],
+    },
+    attire: {
+      eyebrow: "Codigo de vestimenta",
+      title: "Celebracion charra",
+      lead:
+        "Esta es una boda charra. Se recomienda y celebra el atuendo de gala charra, trajes de mariachi y botas.",
+      cardTitle: "Detalles de vestimenta",
+      items: [
+        "Trajes charros y vestidos con bordado clasico",
+        "Trajes inspirados en mariachi o etiqueta elegante",
+        "Botas y detalles vaqueros bienvenidos",
+      ],
+      note: "Saquen su mejor atuendo y vengan listos para celebrar.",
+    },
+    gallery: {
+      eyebrow: "Galeria",
+      title: "Momentos juntos",
+      lead: "Momentos que hemos compartido.",
+    },
+    travel: {
+      eyebrow: "Hospedaje",
+      title: "Opciones cercanas",
+      lead: "Opciones cercanas para hospedarse.",
+    },
+    party: {
+      eyebrow: "Cortejo",
+      title: "Nuestra gente",
+      lead: "Nuestra familia y amigos mas cercanos.",
+      groomsmen: "Padrinos",
+      bridesmaids: "Damas",
+    },
+    rsvp: {
+      eyebrow: "Confirmacion",
+      title: "Confirma tu asistencia",
+      lead:
+        "Las invitaciones formales y los detalles de confirmacion se compartiran pronto. Habra asientos asignados, por favor confirma tu asistencia cuando se comparta la confirmacion.",
+    },
+    footer: "Con amor, Cesar y Candy",
+  },
+};
+
+const gallery = [
+  {
+    src: "/images/cesar-candy-dodgers.jpg",
+    alt: {
+      en: "Cesar and Candy at a Dodgers game",
+      es: "Cesar y Candy en un juego de los Dodgers",
+    },
+    label: { en: "Dodger day", es: "Dia en los Dodgers" },
+  },
+  {
+    src: "/images/candy-vineyard.jpg",
+    alt: { en: "Candy in a vineyard", es: "Candy en un viniedo" },
+    label: { en: "Summer vineyard", es: "Viniedo en verano" },
+  },
+  {
+    src: "/images/cesar-candy-dtla.jpg",
+    alt: {
+      en: "Cesar and Candy at night in downtown Los Angeles",
+      es: "Cesar y Candy de noche en el centro de Los Angeles",
+    },
+    label: { en: "DTLA nights", es: "Noches en DTLA" },
+  },
+  {
+    src: "/images/cesar-candy-waltz.jpg",
+    alt: {
+      en: "Cesar and Candy dressed up on a rooftop",
+      es: "Cesar y Candy arreglados en una terraza",
+    },
+    label: { en: "Date night", es: "Noche de cita" },
+  },
+  {
+    src: "/images/cesar-candy-green.jpg",
+    alt: {
+      en: "Cesar and Candy at a garden celebration",
+      es: "Cesar y Candy en una celebracion en jardin",
+    },
+    label: { en: "Garden glow", es: "Brillo en el jardin" },
+  },
+  {
+    src: "/images/cesar-candy-pond.jpg",
+    alt: {
+      en: "Cesar and Candy by a pond at sunset",
+      es: "Cesar y Candy junto a un lago al atardecer",
+    },
+    label: { en: "Sunset walk", es: "Paseo al atardecer" },
+  },
+  {
+    src: "/images/cesar-candy-gala.jpg",
+    alt: {
+      en: "Cesar and Candy at a formal event",
+      es: "Cesar y Candy en un evento formal",
+    },
+    label: { en: "Gala ready", es: "Listos para gala" },
+  },
+  {
+    src: "/images/cesar-charro.jpg",
+    alt: { en: "Cesar in charro attire", es: "Cesar con traje charro" },
+    label: { en: "Charro attire", es: "Traje charro" },
+  },
+];
 
 export default function Home() {
+  const [lang, setLang] = useState("en");
+  const content = copy[lang];
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-    >
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the index.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className={`${displayFont.variable} ${bodyFont.variable} page`}>
+      <header className="site-header">
+        <div className="container flex items-center justify-between gap-6">
+          <div className="brand font-display">Cesar + Candy</div>
+          <nav className="site-nav">
+            <a href="#story">{content.nav.story}</a>
+            <a href="#attire">{content.nav.attire}</a>
+            <a href="#gallery">{content.nav.gallery}</a>
+            <a href="#travel">{content.nav.travel}</a>
+            <a href="#party">{content.nav.party}</a>
+            <a href="#rsvp">{content.nav.rsvp}</a>
+          </nav>
+          <div className="lang-toggle" role="group" aria-label="Language">
+            <button
+              className={lang === "en" ? "is-active" : ""}
+              onClick={() => setLang("en")}
+              type="button"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              EN
+            </button>
+            <button
+              className={lang === "es" ? "is-active" : ""}
+              onClick={() => setLang("es")}
+              type="button"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              ES
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs/pages/getting-started?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+      </header>
+
+      <main>
+        <section className="hero" id="top">
+          <div className="container hero-grid">
+            <div className="hero-content reveal">
+              <p className="eyebrow">{content.hero.eyebrow}</p>
+              <h1 className="hero-title font-display">
+                Cesar Rios &amp; Candy Rios
+              </h1>
+              <p className="hero-subtitle">{content.hero.subtitle}</p>
+              <div className="hero-tags">
+                {content.hero.tags.map((tag) => (
+                  <span className="tag" key={tag}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <div className="hero-actions">
+                <a className="btn-primary" href="#story">
+                  {content.hero.ctaPrimary}
+                </a>
+                <a className="btn-secondary" href="#travel">
+                  {content.hero.ctaSecondary}
+                </a>
+              </div>
+            </div>
+            <div className="hero-panel reveal delay-1">
+              <div className="info-card">
+                <p className="eyebrow">{content.info.eyebrow}</p>
+                <h2 className="section-title font-display">{content.info.title}</h2>
+                <p>{content.info.body}</p>
+                <p className="note">{content.info.note}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="story">
+          <div className="container">
+            <div className="section-header reveal">
+              <p className="eyebrow">{content.story.eyebrow}</p>
+              <h2 className="section-title font-display">{content.story.title}</h2>
+            </div>
+            <p className="lead reveal delay-1">{content.story.lead}</p>
+            <div className="story-grid">
+              {content.story.cards.map((card, index) => (
+                <div
+                  className={`story-card reveal delay-${index + 2}`}
+                  key={card.title}
+                >
+                  <span className="story-year">{card.year}</span>
+                  <h3 className="font-display">{card.title}</h3>
+                  <p>{card.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-accent" id="attire">
+          <div className="container accent-grid">
+            <div className="reveal">
+              <p className="eyebrow">{content.attire.eyebrow}</p>
+              <h2 className="section-title font-display">{content.attire.title}</h2>
+              <p className="lead">{content.attire.lead}</p>
+            </div>
+            <div className="attire-card reveal delay-1">
+              <h3 className="font-display">{content.attire.cardTitle}</h3>
+              <ul>
+                {content.attire.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <p className="note">{content.attire.note}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="gallery">
+          <div className="container">
+            <div className="section-header reveal">
+              <p className="eyebrow">{content.gallery.eyebrow}</p>
+              <h2 className="section-title font-display">{content.gallery.title}</h2>
+            </div>
+            <p className="lead reveal delay-1">{content.gallery.lead}</p>
+            <div className="photo-grid">
+              {gallery.map((photo) => (
+                <figure className="photo-card reveal" key={photo.src}>
+                  <div className="photo-frame">
+                    <Image
+                      src={photo.src}
+                      alt={photo.alt[lang]}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 320px"
+                      className="photo-img"
+                    />
+                  </div>
+                  <figcaption>{photo.label[lang]}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section" id="travel">
+          <div className="container">
+            <div className="section-header reveal">
+              <p className="eyebrow">{content.travel.eyebrow}</p>
+              <h2 className="section-title font-display">{content.travel.title}</h2>
+            </div>
+            <p className="lead reveal delay-1">{content.travel.lead}</p>
+            <div className="travel-grid">
+              <div className="travel-card reveal delay-1">
+                <h3 className="font-display">Cajon Pass Inn</h3>
+                <p>8317 CA-138, Phelan, CA 92371</p>
+              </div>
+              <div className="travel-card reveal delay-2">
+                <h3 className="font-display">Grand Pine Cabins</h3>
+                <p>6045 Pine St, Wrightwood, CA 92397</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-accent" id="party">
+          <div className="container">
+            <div className="section-header reveal">
+              <p className="eyebrow">{content.party.eyebrow}</p>
+              <h2 className="section-title font-display">{content.party.title}</h2>
+            </div>
+            <p className="lead reveal delay-1">{content.party.lead}</p>
+            <div className="party-grid">
+              <div className="party-card reveal delay-1">
+                <h3 className="font-display">{content.party.groomsmen}</h3>
+                <ul>
+                  <li>Miguel Sornia</li>
+                  <li>Jese Aguilar</li>
+                  <li>Julio Lamas</li>
+                  <li>Felix Lamas</li>
+                  <li>Emanuel Jaramillo</li>
+                  <li>Daniel Zamora</li>
+                  <li>Alberto Rios</li>
+                  <li>Rafael Rios</li>
+                  <li>Jesus Rios Guillen</li>
+                </ul>
+              </div>
+              <div className="party-card reveal delay-2">
+                <h3 className="font-display">{content.party.bridesmaids}</h3>
+                <ul>
+                  <li>Marlene Reyes</li>
+                  <li>Miroslava Bustamante</li>
+                  <li>Marie Aguilar</li>
+                  <li>Ana Bustamante</li>
+                  <li>Gaby Bustamante</li>
+                  <li>Karla Medina</li>
+                  <li>Kitzy Anguian</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-cta" id="rsvp">
+          <div className="container reveal">
+            <div className="cta-card">
+              <p className="eyebrow">{content.rsvp.eyebrow}</p>
+              <h2 className="section-title font-display">{content.rsvp.title}</h2>
+              <p className="lead">{content.rsvp.lead}</p>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <footer className="site-footer">
+        <div className="container">
+          <p>{content.footer}</p>
+        </div>
+      </footer>
     </div>
   );
 }

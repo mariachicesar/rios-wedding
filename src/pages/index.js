@@ -23,6 +23,7 @@ const copy = {
       travel: "Travel",
       party: "Wedding Party",
       rsvp: "RSVP",
+      itinerary: "Family itinerary",
     },
     hero: {
       eyebrow: "Save the date",
@@ -84,6 +85,58 @@ const copy = {
       title: "Nearby stays",
       lead: "Nearby options for lodging.",
     },
+    itinerary: {
+      eyebrow: "Family itinerary",
+      title: "Seven-day stay plan",
+      lead:
+        "Starting the Monday after the wedding, here is a relaxed seven-day plan for family visiting from Mexico.",
+      start: "Starts Monday, Sept 7, 2026",
+      calendarLabel: "Add to Google Calendar",
+      days: [
+        {
+          date: "Mon, Sept 7",
+          dateValue: "20260907",
+          title: "Arrival + rest",
+          detail: "Settle in, light dinner near home.",
+        },
+        {
+          date: "Tue, Sept 8",
+          dateValue: "20260908",
+          title: "Hollywood",
+          detail: "Walk of Fame, TCL Chinese Theatre, sunset at Griffith Observatory.",
+        },
+        {
+          date: "Wed, Sept 9",
+          dateValue: "20260909",
+          title: "Santa Monica",
+          detail: "Beach morning, Santa Monica Pier, Third Street Promenade.",
+        },
+        {
+          date: "Thu, Sept 10",
+          dateValue: "20260910",
+          title: "Universal + CityWalk",
+          detail: "Full day at Universal Studios, dinner at CityWalk.",
+        },
+        {
+          date: "Fri, Sept 11",
+          dateValue: "20260911",
+          title: "Dodger game",
+          detail: "Game day or stadium tour.",
+        },
+        {
+          date: "Sat, Sept 12",
+          dateValue: "20260912",
+          title: "Disneyland",
+          detail: "Full day in Anaheim.",
+        },
+        {
+          date: "Sun, Sept 13",
+          dateValue: "20260913",
+          title: "Departure",
+          detail: "Pack and travel.",
+        },
+      ],
+    },
     party: {
       eyebrow: "Wedding party",
       title: "Our people",
@@ -96,6 +149,7 @@ const copy = {
       title: "Please RSVP",
       lead:
         "Formal invitations and RSVP details are on the way. This will be assigned seating, so please confirm your attendance once the RSVP is shared.",
+      calendarLabel: "Add to Google Calendar",
     },
     footer: "With love, Cesar & Candy",
   },
@@ -107,6 +161,7 @@ const copy = {
       travel: "Hospedaje",
       party: "Cortejo",
       rsvp: "Confirmacion",
+      itinerary: "Itinerario",
     },
     hero: {
       eyebrow: "Guarden la fecha",
@@ -168,6 +223,58 @@ const copy = {
       title: "Opciones cercanas",
       lead: "Opciones cercanas para hospedarse.",
     },
+    itinerary: {
+      eyebrow: "Itinerario familiar",
+      title: "Plan de siete dias",
+      lead:
+        "Empezando el lunes despues de la boda, este es un plan relajado de siete dias para la familia que viene de Mexico.",
+      start: "Empieza lunes, 7 de septiembre de 2026",
+      calendarLabel: "Agregar a Google Calendar",
+      days: [
+        {
+          date: "Lun, 7 sept",
+          dateValue: "20260907",
+          title: "Llegada + descanso",
+          detail: "Acomodarse, cena ligera cerca de casa.",
+        },
+        {
+          date: "Mar, 8 sept",
+          dateValue: "20260908",
+          title: "Hollywood",
+          detail: "Walk of Fame, Teatro Chino TCL, atardecer en Griffith Observatory.",
+        },
+        {
+          date: "Mie, 9 sept",
+          dateValue: "20260909",
+          title: "Santa Monica",
+          detail: "Playa por la manana, Santa Monica Pier, Third Street Promenade.",
+        },
+        {
+          date: "Jue, 10 sept",
+          dateValue: "20260910",
+          title: "Universal + CityWalk",
+          detail: "Dia completo en Universal Studios, cena en CityWalk.",
+        },
+        {
+          date: "Vie, 11 sept",
+          dateValue: "20260911",
+          title: "Juego de Dodgers",
+          detail: "Dia de juego o tour del estadio.",
+        },
+        {
+          date: "Sab, 12 sept",
+          dateValue: "20260912",
+          title: "Disneyland",
+          detail: "Dia completo en Anaheim.",
+        },
+        {
+          date: "Dom, 13 sept",
+          dateValue: "20260913",
+          title: "Salida",
+          detail: "Empacar y viaje.",
+        },
+      ],
+    },
     party: {
       eyebrow: "Cortejo",
       title: "Nuestra gente",
@@ -180,6 +287,7 @@ const copy = {
       title: "Confirma tu asistencia",
       lead:
         "Las invitaciones formales y los detalles de confirmacion se compartiran pronto. Habra asientos asignados, por favor confirma tu asistencia cuando se comparta la confirmacion.",
+      calendarLabel: "Agregar a Google Calendar",
     },
     footer: "Con amor, Cesar y Candy",
   },
@@ -250,6 +358,30 @@ export default function Home() {
   const [lang, setLang] = useState("en");
   const content = copy[lang];
 
+  const buildCalendarLink = (day) => {
+    const year = Number(day.dateValue.slice(0, 4));
+    const month = Number(day.dateValue.slice(4, 6));
+    const date = Number(day.dateValue.slice(6, 8));
+    const start = new Date(Date.UTC(year, month - 1, date));
+    const end = new Date(Date.UTC(year, month - 1, date + 1));
+    const toValue = (value) =>
+      value.toISOString().slice(0, 10).replaceAll("-", "");
+    const dates = `${toValue(start)}/${toValue(end)}`;
+    const text = `${day.title} - Cesar & Candy Wedding Week`;
+    const details = day.detail;
+    const location = "Los Angeles, CA";
+
+    const params = new URLSearchParams({
+      action: "TEMPLATE",
+      text,
+      dates,
+      details,
+      location,
+    });
+
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  };
+
   return (
     <div className={`${displayFont.variable} ${bodyFont.variable} page`}>
       <header className="site-header">
@@ -262,6 +394,7 @@ export default function Home() {
             <a href="#travel">{content.nav.travel}</a>
             <a href="#party">{content.nav.party}</a>
             <a href="#rsvp">{content.nav.rsvp}</a>
+            <a href="#itinerary">{content.nav.itinerary}</a>
           </nav>
           <div className="lang-toggle" role="group" aria-label="Language">
             <button
@@ -405,6 +538,38 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="section" id="itinerary">
+          <div className="container">
+            <div className="section-header reveal">
+              <p className="eyebrow">{content.itinerary.eyebrow}</p>
+              <h2 className="section-title font-display">
+                {content.itinerary.title}
+              </h2>
+            </div>
+            <p className="lead reveal delay-1">{content.itinerary.lead}</p>
+            <p className="itinerary-start reveal delay-2">
+              {content.itinerary.start}
+            </p>
+            <div className="itinerary-grid">
+              {content.itinerary.days.map((day) => (
+                <article className="itinerary-card reveal" key={day.date}>
+                  <span className="itinerary-date">{day.date}</span>
+                  <h3 className="font-display">{day.title}</h3>
+                  <p>{day.detail}</p>
+                  <a
+                    className="itinerary-link"
+                    href={buildCalendarLink(day)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {content.itinerary.calendarLabel}
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="section section-accent" id="party">
           <div className="container">
             <div className="section-header reveal">
@@ -449,6 +614,14 @@ export default function Home() {
               <p className="eyebrow">{content.rsvp.eyebrow}</p>
               <h2 className="section-title font-display">{content.rsvp.title}</h2>
               <p className="lead">{content.rsvp.lead}</p>
+              <a
+                className="btn-secondary rsvp-calendar"
+                href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wedding%20Cesar%20Rios%20%26%20Candy%20Rios&dates=20260905/20260906&details=Charro%20Wedding%20-%20Save%20the%20date.%20Formal%20invitations%20and%20RSVP%20details%20to%20follow.%20Assigned%20seating.&location=Phelan,%20CA"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {content.rsvp.calendarLabel}
+              </a>
             </div>
           </div>
         </section>
